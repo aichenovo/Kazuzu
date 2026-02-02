@@ -13,12 +13,10 @@ class BangumiInfoCardV extends StatefulWidget {
     super.key,
     required this.bangumiItem,
     required this.isLoading,
-    required this.showRating,
   });
 
   final BangumiItem bangumiItem;
   final bool isLoading;
-  final bool showRating;
 
   @override
   State<BangumiInfoCardV> createState() => _BangumiInfoCardVState();
@@ -28,6 +26,9 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
   int touchedIndex = -1;
 
   Widget get voteBarChart {
+    final int votes = widget.bangumiItem.votes;
+    final List<int> votesCount = widget.bangumiItem.votesCount;
+    final int denom = votes <= 0 ? 1 : votes;
     return Flexible(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,12 +62,9 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
                     getTooltipColor: (_) =>
                         Theme.of(context).colorScheme.inverseSurface,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                      var percentage =
-                          widget.bangumiItem.votesCount[groupIndex] /
-                              widget.bangumiItem.votes *
-                              100;
+                      final percentage = (votesCount[groupIndex] / denom) * 100;
                       return BarTooltipItem(
-                        '${percentage.toStringAsFixed(2)}% (${widget.bangumiItem.votesCount[groupIndex]}人)',
+                        '${percentage.toStringAsFixed(2)}% (${votesCount[groupIndex]}人)',
                         TextStyle(
                             color:
                                 Theme.of(context).colorScheme.onInverseSurface),
@@ -80,7 +78,7 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
                     x: i + 1,
                     barRods: [
                       BarChartRodData(
-                        toY: widget.bangumiItem.votesCount[i].toDouble(),
+                        toY: votesCount[i].toDouble(),
                         color: touchedIndex == i
                             ? Theme.of(context).colorScheme.primary
                             : Theme.of(context).disabledColor,
@@ -118,6 +116,11 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
 
   @override
   Widget build(BuildContext context) {
+    final bool canShowVoteBarChart =
+        !widget.isLoading &&
+        widget.bangumiItem.votesCount.length >= 10 &&
+        widget.bangumiItem.votesCount.any((v) => v > 0);
+
     return Container(
       height: 300,
       constraints: BoxConstraints(maxWidth: 950),
@@ -169,7 +172,7 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '放送开始:',
+                              '首播日期:',
                             ),
                             Text(
                               widget.bangumiItem.airDate == ''
@@ -183,9 +186,7 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
                             ),
                             SizedBox(height: 8),
                             Text(
-                              widget.showRating
-                                  ? '${widget.bangumiItem.votes} 人评分:'
-                                  : '*** 人评分:',
+                              '${widget.bangumiItem.votes} 人评分:',
                             ),
                             if (widget.isLoading)
                               // Skeleton Loader 占位符
@@ -201,9 +202,7 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
                               Row(
                                 children: [
                                   Text(
-                                    widget.showRating
-                                        ? '${widget.bangumiItem.ratingScore}'
-                                        : '***',
+                                    '${widget.bangumiItem.ratingScore}',
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
@@ -214,11 +213,9 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
                                   const SizedBox(width: 8),
                                   RatingBarIndicator(
                                     itemCount: 5,
-                                    rating: widget.showRating
-                                        ? widget.bangumiItem.ratingScore
-                                                .toDouble() /
-                                            2
-                                        : 0,
+                                    rating: widget.bangumiItem.ratingScore
+                                            .toDouble() /
+                                        2,
                                     itemBuilder: (context, index) => Icon(
                                       Icons.star_rounded,
                                       color:
@@ -230,12 +227,10 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
                               ),
                             SizedBox(height: 8),
                             Text(
-                              'Bangumi Ranked:',
+                              'TMDB ID:',
                             ),
                             Text(
-                              widget.showRating
-                                  ? '#${widget.bangumiItem.rank}'
-                                  : '***',
+                              '${widget.bangumiItem.id}',
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -255,10 +250,9 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
                     ),
                   ),
                 ),
-                if (widget.showRating &&
-                    MediaQuery.sizeOf(context).width >=
+                if (MediaQuery.sizeOf(context).width >=
                         LayoutBreakpoint.compact['width']! &&
-                    !widget.isLoading)
+                    canShowVoteBarChart)
                   voteBarChart,
               ],
             ),
