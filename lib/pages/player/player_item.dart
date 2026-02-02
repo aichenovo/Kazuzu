@@ -43,6 +43,7 @@ class PlayerItem extends StatefulWidget {
     required this.onBackPressed,
     required this.keyboardFocus,
     required this.sendDanmaku,
+    required this.showDanmakuDestinationPickerAndSend,
     this.disableAnimations = false,
   });
 
@@ -54,6 +55,7 @@ class PlayerItem extends StatefulWidget {
   final void Function(String) sendDanmaku;
   final FocusNode keyboardFocus;
   final bool disableAnimations;
+  final void Function(String) showDanmakuDestinationPickerAndSend;
 
   @override
   State<PlayerItem> createState() => _PlayerItemState();
@@ -1049,6 +1051,7 @@ class _PlayerItemState extends State<PlayerItem>
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                     ),
+                    isExpanded: true,
                     value: selectedSyncPlayEndPoint,
                     items: syncPlayEndPoints.map((String value) {
                       return DropdownMenuItem<String>(
@@ -1059,6 +1062,14 @@ class _PlayerItemState extends State<PlayerItem>
                         ),
                       );
                     }).toList(),
+                    selectedItemBuilder: (context) {
+                      return syncPlayEndPoints.map((String value) {
+                        return Text(
+                          value,
+                          overflow: TextOverflow.ellipsis,
+                        );
+                      }).toList();
+                    },
                     onChanged: (String? newValue) {
                       if (newValue != null) {
                         if (newValue == defaultCustomSyncPlayEndPoint) {
@@ -1502,6 +1513,7 @@ class _PlayerItemState extends State<PlayerItem>
                                 showSyncPlayRoomCreateDialog,
                             showSyncPlayEndPointSwitchDialog:
                                 showSyncPlayEndPointSwitchDialog,
+                            showDanmakuDestinationPickerAndSend: widget.showDanmakuDestinationPickerAndSend,
                             disableAnimations: widget.disableAnimations,
                             handleScreenShot: handleScreenshot,
                             skipOP: skipOP,
