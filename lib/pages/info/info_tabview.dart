@@ -4,7 +4,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kazumi/bean/widget/error_widget.dart';
 import 'package:kazumi/bean/card/comments_card.dart';
 import 'package:kazumi/bean/card/character_card.dart';
-import 'package:kazumi/bean/card/staff_card.dart';
 import 'package:kazumi/utils/utils.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:kazumi/modules/bangumi/bangumi_item.dart';
@@ -137,21 +136,13 @@ class _InfoTabViewState extends State<InfoTabView>
                       },
                     );
                   }
+                  final tag = widget.bangumiItem.tags[index];
+                  final isTmdbGenre = tag.count == 0 && tag.totalCount > 0;
                   return ActionChip(
-                    label: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('${widget.bangumiItem.tags[index].name} '),
-                        Text(
-                          '${widget.bangumiItem.tags[index].count}',
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary),
-                        ),
-                      ],
-                    ),
+                    label: Text(tag.name),
                     onPressed: () {
-                      Modular.to.pushNamed(
-                          '/search/${widget.bangumiItem.tags[index].name}');
+                      final q = isTmdbGenre ? 'genre:${tag.totalCount}' : 'tag:${tag.name}';
+                      Modular.to.pushNamed('/search/${Uri.encodeComponent(q)}');
                     },
                   );
                 }).toList(),
@@ -212,7 +203,7 @@ class _InfoTabViewState extends State<InfoTabView>
             scrollBehavior: const ScrollBehavior().copyWith(
               scrollbars: false,
             ),
-            key: PageStorageKey<String>('吐槽'),
+            key: PageStorageKey<String>('影评'),
             slivers: <Widget>[
               SliverOverlapInjector(
                 handle:
@@ -266,18 +257,7 @@ class _InfoTabViewState extends State<InfoTabView>
                 }
                 if (widget.commentsQueryTimeout) {
                   return SliverFillRemaining(
-                    child: GeneralErrorWidget(
-                      errMsg: '获取失败，请重试',
-                      actions: [
-                        GeneralErrorButton(
-                          onPressed: () {
-                            widget.loadMoreComments(
-                                offset: widget.commentsList.length);
-                          },
-                          text: '重试',
-                        ),
-                      ],
-                    ),
+                    child: GeneralErrorWidget(errMsg: '暂无影评'),
                   );
                 }
                 return SliverList.builder(
@@ -322,37 +302,81 @@ class _InfoTabViewState extends State<InfoTabView>
             ),
             SliverLayoutBuilder(builder: (context, _) {
               if (widget.staffList.isNotEmpty) {
-                return SliverList.builder(
-                  itemCount: widget.staffList.length,
-                  itemBuilder: (context, index) {
-                    return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: SizedBox(
-                          width: MediaQuery.sizeOf(context).width > maxWidth
-                              ? maxWidth
-                              : MediaQuery.sizeOf(context).width - 32,
-                          child: StaffCard(
-                            staffFullItem: widget.staffList[index],
+                final double width = MediaQuery.sizeOf(context).width;
+                final int crossAxisCount =
+                    width >= 1000 ? 5 : (width >= 760 ? 4 : (width >= 520 ? 3 : 2));
+
+                return SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                  sliver: SliverGrid(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      mainAxisSpacing: 12,
+                      crossAxisSpacing: 12,
+                      childAspectRatio: 1.05,
+                    ),
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final item = widget.staffList[index];
+                        final avatar = item.staff.images?.grid ?? '';
+                        final name = item.staff.name;
+                        final role = item.positions.isNotEmpty
+                            ? item.positions.first.type.cn
+                            : '';
+
+                        return Card(
+                          clipBehavior: Clip.antiAlias,
+                          child: InkWell(
+                            onTap: () {},
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 28,
+                                    backgroundImage:
+                                        avatar.isEmpty ? null : NetworkImage(avatar),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style:
+                                        Theme.of(context).textTheme.titleSmall,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    role,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurfaceVariant,
+                                        ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    );
-                  },
+                        );
+                      },
+                      childCount: widget.staffList.length,
+                    ),
+                  ),
                 );
               }
               if (widget.staffQueryTimeout) {
                 return SliverFillRemaining(
                   child: GeneralErrorWidget(
-                    errMsg: '获取失败，请重试',
-                    actions: [
-                      GeneralErrorButton(
-                        onPressed: () {
-                          widget.loadStaff();
-                        },
-                        text: '重试',
-                      ),
-                    ],
+                    errMsg: '暂无制作人员',
                   ),
                 );
               }
@@ -390,7 +414,7 @@ class _InfoTabViewState extends State<InfoTabView>
           scrollBehavior: const ScrollBehavior().copyWith(
             scrollbars: false,
           ),
-          key: PageStorageKey<String>('角色'),
+          key: PageStorageKey<String>('演员'),
           slivers: <Widget>[
             SliverOverlapInjector(
               handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
@@ -495,26 +519,6 @@ class _InfoTabViewState extends State<InfoTabView>
         ),
         commentsListBody,
         charactersListBody,
-        Builder(
-          builder: (BuildContext context) {
-            return CustomScrollView(
-              scrollBehavior: const ScrollBehavior().copyWith(
-                scrollbars: false,
-              ),
-              key: PageStorageKey<String>('评论'),
-              slivers: <Widget>[
-                SliverOverlapInjector(
-                  handle:
-                      NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-                ),
-                // TODO: 评论区
-                SliverFillRemaining(
-                  child: Center(child: Text('施工中')),
-                ),
-              ],
-            );
-          },
-        ),
         staffListBody,
       ],
     );
