@@ -1,6 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kazumi/modules/bangumi/bangumi_item.dart';
-import 'package:kazumi/request/bangumi.dart';
+import 'package:kazumi/request/tmdb.dart';
 import 'package:kazumi/utils/anime_season.dart';
 import 'package:kazumi/repositories/collect_repository.dart';
 import 'package:kazumi/modules/collect/collect_type.dart';
@@ -43,15 +43,7 @@ abstract class _TimelineController with Store {
   }
 
   Future<void> getSchedules() async {
-    isLoading = true;
-    isTimeOut = false;
-    bangumiCalendar.clear();
-    final resBangumiCalendar = await BangumiHTTP.getCalendar();
-    bangumiCalendar.clear();
-    bangumiCalendar.addAll(resBangumiCalendar);
-    changeSortType(sortType);
-    isLoading = false;
-    isTimeOut = bangumiCalendar.isEmpty;
+    await getSchedulesBySeason();
   }
 
   Future<void> getSchedulesBySeason() async {
@@ -59,16 +51,20 @@ abstract class _TimelineController with Store {
     isLoading = true;
     isTimeOut = false;
     bangumiCalendar.clear();
-    var time = 0;
     const maxTime = 4;
     const limit = 20;
-    var resBangumiCalendar = List.generate(7, (_) => <BangumiItem>[]);
-    for (time = 0; time < maxTime; time++) {
+    final resBangumiCalendar = List.generate(7, (_) => <BangumiItem>[]);
+    for (var time = 0; time < maxTime; time++) {
       final offset = time * limit;
-      var newList = await BangumiHTTP.getCalendarBySearch(
-          AnimeSeason(selectedDate).toSeasonStartAndEnd(), limit, offset);
-      for (int i = 0; i < resBangumiCalendar.length; ++i) {
-        resBangumiCalendar[i].addAll(newList[i]);
+      final list = await TMDBHTTP.discoverTvByDateRange(
+        AnimeSeason(selectedDate).toSeasonStartAndEnd(),
+        offset: offset,
+      );
+      for (final item in list) {
+        final weekday = item.airWeekday;
+        if (weekday >= 1 && weekday <= 7) {
+          resBangumiCalendar[weekday - 1].add(item);
+        }
       }
       bangumiCalendar.clear();
       bangumiCalendar.addAll(resBangumiCalendar);
