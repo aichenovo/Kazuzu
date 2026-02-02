@@ -1,6 +1,6 @@
 class Api {
   /// 当前版本
-  static const String version = '1.9.6';
+  static const String version = '1.9.4';
   /// 规则API级别
   static const int apiLevel = 5;
   /// 项目主页
@@ -61,6 +61,10 @@ class Api {
   static const String dandanAPIInfo = "/api/v2/bangumi/";
   /// 获取弹弹番剧元数据（通过BGM番剧ID）
   static const String dandanAPIInfoByBgmBangumiId = "/api/v2/bangumi/bgmtv/{0}";
+
+  /// TMDB API Domain
+  static const String tmdbAPIDomain = 'https://api.themoviedb.org';
+  static const String tmdbAPIVersionPath = '/3';
 
   static String formatUrl(String url, List<dynamic> params) {
     for (int i = 0; i < params.length; i++) {
