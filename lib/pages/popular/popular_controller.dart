@@ -1,7 +1,7 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:kazumi/request/bangumi.dart';
+import 'package:kazumi/request/tmdb.dart';
 import 'package:kazumi/modules/bangumi/bangumi_item.dart';
+import 'package:kazumi/utils/constants.dart';
 import 'package:mobx/mobx.dart';
 
 part 'popular_controller.g.dart';
@@ -41,8 +41,7 @@ abstract class _PopularController with Store {
       trendList.clear();
     }
     isLoadingMore = true;
-    var result =
-        await BangumiHTTP.getBangumiTrendsList(offset: trendList.length);
+    var result = await TMDBHTTP.getTrendingTv(offset: trendList.length);
     trendList.addAll(result);
     isLoadingMore = false;
     isTimeOut = trendList.isEmpty;
@@ -53,9 +52,18 @@ abstract class _PopularController with Store {
       bangumiList.clear();
     }
     isLoadingMore = true;
-    int randomNumber = Random().nextInt(8000) + 1;
     var tag = currentTag;
-    var result = await BangumiHTTP.getBangumiList(rank: randomNumber, tag: tag);
+    final filter = exploreTagFilters[tag];
+    final withGenres = filter?['with_genres'];
+    final withOriginalLanguage = filter?['with_original_language'];
+
+    final List<BangumiItem> result = filter == null
+        ? await TMDBHTTP.searchTvMovie(tag, offset: bangumiList.length)
+        : await TMDBHTTP.discoverTv(
+            offset: bangumiList.length,
+            withGenres: withGenres,
+            withOriginalLanguage: withOriginalLanguage,
+          );
     bangumiList.addAll(result);
     isLoadingMore = false;
     isTimeOut = bangumiList.isEmpty;
