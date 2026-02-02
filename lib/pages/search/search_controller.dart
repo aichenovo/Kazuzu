@@ -1,7 +1,7 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 import 'package:kazumi/modules/bangumi/bangumi_item.dart';
-import 'package:kazumi/request/bangumi.dart';
+import 'package:kazumi/request/tmdb.dart';
 import 'package:kazumi/utils/search_parser.dart';
 import 'package:kazumi/modules/search/search_history_module.dart';
 import 'package:kazumi/repositories/collect_repository.dart';
@@ -75,22 +75,37 @@ abstract class _SearchPageController with Store {
     SearchParser parser = SearchParser(input);
     String? idString = parser.parseId();
     String? tag = parser.parseTag();
-    String? sort = parser.parseSort();
+    String? genreIdString = parser.parseGenreId();
     String keywords = parser.parseKeywords();
     if (idString != null) {
       final id = int.tryParse(idString);
       if (id != null) {
-        final BangumiItem? item = await BangumiHTTP.getBangumiInfoByID(id);
+        BangumiItem? item =
+            await TMDBHTTP.getDetails(id, mediaType: 'tv');
+        item ??= await TMDBHTTP.getDetails(id, mediaType: 'movie');
         if (item != null) {
           bangumiList.add(item);
         }
+        isLoading = false;
+        isTimeOut = bangumiList.isEmpty;
         return;
       }
     }
-    var result = await BangumiHTTP.bangumiSearch(keywords,
-        tags: [if (tag != null) tag],
+    if (tag != null && tag.isNotEmpty) {
+      keywords = '$keywords $tag'.trim();
+    }
+    final List<BangumiItem> result;
+    if (genreIdString != null && keywords.isEmpty) {
+      result = await TMDBHTTP.discoverTv(
         offset: bangumiList.length,
-        sort: sort ?? 'heat');
+        withGenres: genreIdString,
+      );
+    } else {
+      result = await TMDBHTTP.searchTvMovie(
+        keywords,
+        offset: bangumiList.length,
+      );
+    }
     bangumiList.addAll(result);
     isLoading = false;
     isTimeOut = bangumiList.isEmpty;
