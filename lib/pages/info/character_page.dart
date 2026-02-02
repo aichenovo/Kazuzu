@@ -1,10 +1,6 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:kazumi/modules/character/character_full_item.dart';
-import 'package:kazumi/modules/comments/comment_item.dart';
-import 'package:kazumi/request/bangumi.dart';
+import 'package:kazumi/request/tmdb.dart';
 import 'package:kazumi/bean/card/network_img_layer.dart';
-import 'package:kazumi/bean/card/character_comments_card.dart';
 import 'package:kazumi/bean/widget/error_widget.dart';
 
 class CharacterPage extends StatefulWidget {
@@ -17,37 +13,17 @@ class CharacterPage extends StatefulWidget {
 }
 
 class _CharacterPageState extends State<CharacterPage> {
-  late CharacterFullItem characterFullItem;
-  bool loadingCharacter = true;
-  List<CharacterCommentItem> commentsList = [];
-  bool loadingComments = true;
+  Map<String, dynamic>? person;
+  bool loadingPerson = true;
 
-  Future<void> loadCharacter() async {
+  Future<void> loadPerson() async {
     setState(() {
-      loadingCharacter = true;
+      loadingPerson = true;
     });
-    await BangumiHTTP.getCharacterByCharacterID(widget.characterID)
-        .then((character) {
-      characterFullItem = character;
-    });
+    person = await TMDBHTTP.getPersonDetails(widget.characterID);
     if (mounted) {
       setState(() {
-        loadingCharacter = false;
-      });
-    }
-  }
-
-  Future<void> loadComments() async {
-    setState(() {
-      loadingComments = true;
-    });
-    await BangumiHTTP.getCharacterCommentsByCharacterID(widget.characterID)
-        .then((value) {
-      commentsList = value.commentList;
-    });
-    if (mounted) {
-      setState(() {
-        loadingComments = false;
+        loadingPerson = false;
       });
     }
   }
@@ -56,56 +32,32 @@ class _CharacterPageState extends State<CharacterPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      loadCharacter();
-      loadComments();
+      loadPerson();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        body: Column(
-          children: [
-            const PreferredSize(
-              preferredSize: Size.fromHeight(kToolbarHeight),
-              child: Material(
-                child: TabBar(
-                  tabs: [
-                    Tab(text: '人物资料'),
-                    Tab(text: '吐槽箱'),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: TabBarView(
-                children: [characterInfoBody, characterCommentsBody],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    return Scaffold(body: characterInfoBody);
   }
 
   Widget get characterInfoBody {
+    const imageBase = 'https://image.tmdb.org/t/p/';
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: LayoutBuilder(builder: (context, constraints) {
         return Column(
           children: [
             Expanded(
-              child: loadingCharacter
+              child: loadingPerson
                   ? const Center(child: CircularProgressIndicator())
-                  : (characterFullItem.id == 0
+                  : (person == null
                       ? GeneralErrorWidget(
                           errMsg: '什么都没有找到 (´;ω;`)',
                           actions: [
                             GeneralErrorButton(
                               onPressed: () {
-                                loadCharacter();
+                                loadPerson();
                               },
                               text: '点击重试',
                             ),
@@ -122,7 +74,13 @@ class _CharacterPageState extends State<CharacterPage> {
                                 child: NetworkImgLayer(
                                   width: constraints.maxWidth,
                                   height: constraints.maxHeight,
-                                  src: characterFullItem.image,
+                                  src: (() {
+                                    final profilePath =
+                                        (person?['profile_path'] ?? '')
+                                            .toString();
+                                    if (profilePath.isEmpty) return '';
+                                    return '$imageBase/w500$profilePath';
+                                  })(),
                                 ),
                               ),
                               Expanded(
@@ -134,7 +92,7 @@ class _CharacterPageState extends State<CharacterPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          characterFullItem.name,
+                                          (person?['name'] ?? '').toString(),
                                           style: Theme.of(context)
                                               .textTheme
                                               .headlineSmall
@@ -151,7 +109,9 @@ class _CharacterPageState extends State<CharacterPage> {
                                           padding: const EdgeInsets.only(
                                               top: 4.0, bottom: 12.0),
                                           child: Text(
-                                            characterFullItem.nameCN,
+                                            (person?['known_for_department'] ??
+                                                    '')
+                                                .toString(),
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .titleMedium
@@ -175,7 +135,8 @@ class _CharacterPageState extends State<CharacterPage> {
                                           ),
                                         ),
                                         Text(
-                                          characterFullItem.info,
+                                          (person?['place_of_birth'] ?? '')
+                                              .toString(),
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyMedium,
@@ -186,7 +147,7 @@ class _CharacterPageState extends State<CharacterPage> {
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 8.0),
                                           child: Text(
-                                            '角色简介',
+                                            '简介',
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .titleSmall
@@ -196,7 +157,8 @@ class _CharacterPageState extends State<CharacterPage> {
                                           ),
                                         ),
                                         Text(
-                                          characterFullItem.summary,
+                                          (person?['biography'] ?? '')
+                                              .toString(),
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyMedium,
@@ -214,72 +176,6 @@ class _CharacterPageState extends State<CharacterPage> {
           ],
         );
       }),
-    );
-  }
-
-  Widget get characterCommentsBody {
-    return CustomScrollView(
-      scrollBehavior: const ScrollBehavior().copyWith(
-        // Scrollbars' movement is not linear so hide it.
-        scrollbars: false,
-        // Enable mouse drag to refresh
-        dragDevices: {
-          PointerDeviceKind.mouse,
-          PointerDeviceKind.touch,
-        },
-      ),
-      slivers: [
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
-          sliver: Builder(builder: (context) {
-            if (loadingComments) {
-              return const SliverFillRemaining(
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            }
-            if (commentsList.isEmpty) {
-              return SliverFillRemaining(
-                child: GeneralErrorWidget(
-                  errMsg: '什么都没有找到 (´;ω;`)',
-                  actions: [
-                    GeneralErrorButton(
-                      onPressed: () {
-                        loadComments();
-                      },
-                      text: '点击重试',
-                    ),
-                  ],
-                ),
-              );
-            }
-            return SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  // Fix scroll issue caused by height change of network images
-                  // by keeping loaded cards alive.
-                  return KeepAlive(
-                    keepAlive: true,
-                    child: IndexedSemantics(
-                      index: index,
-                      child: SelectionArea(
-                        child: CharacterCommentsCard(
-                          commentItem: commentsList[index],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-                childCount: commentsList.length,
-                addAutomaticKeepAlives: false,
-                addRepaintBoundaries: false,
-                addSemanticIndexes: false,
-              ),
-            );
-          }),
-        ),
-      ],
     );
   }
 }
