@@ -7,6 +7,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:kazumi/utils/utils.dart';
 import 'package:kazumi/utils/mortis.dart';
 import 'package:kazumi/utils/constants.dart';
+import 'package:kazumi/config/tmdb_config.dart';
 
 class ApiInterceptor extends Interceptor {
   static Box setting = GStorage.setting;
@@ -35,6 +36,21 @@ class ApiInterceptor extends Interceptor {
     if (options.path.contains(Api.bangumiAPIDomain) ||
         options.path.contains(Api.bangumiAPINextDomain)) {
       options.headers = bangumiHTTPHeader;
+    }
+    final proxyBase = TmdbConfig.proxyBase.trim();
+    final normalizedProxyBase = proxyBase.isEmpty
+        ? ''
+        : (proxyBase.endsWith('/') ? proxyBase.substring(0, proxyBase.length - 1) : proxyBase);
+    final isTmdbRequest = options.path.contains('api.themoviedb.org') ||
+        (normalizedProxyBase.isNotEmpty && options.path.startsWith(normalizedProxyBase));
+    if (isTmdbRequest) {
+      final token = TmdbConfig.readToken.trim();
+      options.headers = {
+        'user-agent': Utils.getRandomUA(),
+        'referer': '',
+        'accept': 'application/json',
+        if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+      };
     }
     handler.next(options);
   }
