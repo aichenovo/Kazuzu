@@ -15,6 +15,8 @@ class GStorage {
   static late Box<CollectedBangumi> collectibles;
   static late Box<History> histories;
   static late Box<CollectedBangumiChange> collectChanges;
+  static late Box<CollectedBangumi> tmdbCollectiblesBackup;
+  static late Box<History> tmdbHistoriesBackup;
   static late Box<String> shieldList;
   static late final Box<dynamic> setting;
   static late Box<SearchHistory> searchHistory;
@@ -32,6 +34,8 @@ class GStorage {
     histories = await Hive.openBox('histories');
     setting = await Hive.openBox('setting');
     collectChanges = await Hive.openBox('collectchanges');
+    tmdbCollectiblesBackup = await Hive.openBox('tmdbCollectiblesBackup');
+    tmdbHistoriesBackup = await Hive.openBox('tmdbHistoriesBackup');
     shieldList = await Hive.openBox('shieldList');
     searchHistory = await Hive.openBox('searchHistory');
   }
@@ -271,5 +275,5 @@ class SettingBoxKey {
       proxyEnable = 'proxyEnable',
       proxyConfigured = 'proxyConfigured',
       proxyUrl = 'proxyUrl',
-      showRating = 'showRating';
+      tmdbMigrationDone = 'tmdbMigrationDone';
 }
