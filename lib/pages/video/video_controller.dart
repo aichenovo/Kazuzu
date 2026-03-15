@@ -18,7 +18,7 @@ import 'package:window_manager/window_manager.dart';
 import 'package:kazumi/modules/bangumi/episode_item.dart';
 import 'package:kazumi/modules/comments/comment_item.dart';
 import 'package:kazumi/request/bangumi.dart';
-import 'package:aura/request/tmdb.dart';
+import 'package:kazumi/request/tmdb.dart';
 import 'package:dio/dio.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:kazumi/utils/storage.dart';
