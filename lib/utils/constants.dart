@@ -195,23 +195,41 @@ const Map<int, String> playerLogLevelMap = {
   // 5: "全部",
 };
 
-final List<String> defaultAnimeTags = const [
-  '日常',
-  '原创',
-  '校园',
-  '搞笑',
-  '奇幻',
-  '百合',
-  '恋爱',
+final List<String> defaultExploreTags = const [
+  '动漫',
+  '美剧',
+  '日剧',
+  '韩剧',
+  '国剧',
+  '动画',
+  '动作',
+  '喜剧',
+  '剧情',
   '悬疑',
-  '热血',
-  '后宫',
-  '机战',
-  '轻改',
-  '偶像',
-  '治愈',
-  '异世界',
+  '科幻',
+  '犯罪',
+  '纪录片',
+  '真人秀',
+  '家庭',
 ];
+
+const Map<String, Map<String, String>> exploreTagFilters = {
+  '动漫': {'with_genres': '16', 'with_original_language': 'ja'},
+  '动画': {'with_genres': '16'},
+  '美剧': {'with_original_language': 'en'},
+  '日剧': {'with_original_language': 'ja'},
+  '韩剧': {'with_original_language': 'ko'},
+  '国剧': {'with_original_language': 'zh'},
+  '动作': {'with_genres': '10759'},
+  '喜剧': {'with_genres': '35'},
+  '剧情': {'with_genres': '18'},
+  '悬疑': {'with_genres': '9648'},
+  '科幻': {'with_genres': '10765'},
+  '犯罪': {'with_genres': '80'},
+  '纪录片': {'with_genres': '99'},
+  '真人秀': {'with_genres': '10764'},
+  '家庭': {'with_genres': '10751'},
+};
 
 // 播放器默认快捷键
   final Map<String, List<String>> defaultShortcuts = const {
