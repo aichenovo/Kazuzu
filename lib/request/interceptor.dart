@@ -1,13 +1,13 @@
 import 'package:dio/dio.dart';
-import 'package:aura/request/api.dart';
+import 'package:kazumi/request/api.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:aura/utils/storage.dart';
-import 'package:aura/bean/dialog/dialog_helper.dart';
+import 'package:kazumi/utils/storage.dart';
+import 'package:kazumi/bean/dialog/dialog_helper.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:aura/utils/utils.dart';
-import 'package:aura/utils/mortis.dart';
-import 'package:aura/utils/constants.dart';
-import 'package:aura/config/tmdb_config.dart';
+import 'package:kazumi/utils/utils.dart';
+import 'package:kazumi/utils/mortis.dart';
+import 'package:kazumi/utils/constants.dart';
+import 'package:kazumi/config/tmdb_config.dart';
 
 class ApiInterceptor extends Interceptor {
   static Box setting = GStorage.setting;
