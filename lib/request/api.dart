@@ -1,25 +1,27 @@
 class Api {
   /// 当前版本
-  static const String version = '2.0.5';
+  static const String version = '1.9.4';
   /// 规则API级别
-  static const int apiLevel = 6;
+  static const int apiLevel = 5;
   /// 项目主页
-  static const String projectUrl = "https://kazumi.app/";
+  static const String projectUrl = "https://github.com/EKONG-E/Aura";
   /// Github 项目主页
-  static const String sourceUrl = "https://github.com/Predidit/Kazumi";
+  static const String sourceUrl = "https://github.com/EKONG-E/Aura";
   /// 图标作者
   static const String iconUrl = "https://www.pixiv.net/users/66219277";
   /// 规则仓库
   static const String pluginShop = 'https://raw.githubusercontent.com/Predidit/KazumiRules/main/';
   /// 在线升级
   static const String latestApp =
-      'https://api.github.com/repos/Predidit/Kazumi/releases/latest'; 
+      'https://api.github.com/repos/EKONG-E/Aura/releases/latest'; 
   /// Github镜像
   static const String gitMirror = 'https://ghfast.top/';
   /// 弹弹官网
   static const String dandanIndex = 'https://www.dandanplay.com/';
   /// Bangumi 官网
   static const String bangumiIndex = 'https://bangumi.tv/';
+  /// TMDB 官网
+  static const String tmdbIndex = 'https://www.themoviedb.org/';
 
   /// bangumi API Domain
   static const String bangumiAPIDomain = 'https://api.bgm.tv';
@@ -61,6 +63,10 @@ class Api {
   static const String dandanAPIInfo = "/api/v2/bangumi/";
   /// 获取弹弹番剧元数据（通过BGM番剧ID）
   static const String dandanAPIInfoByBgmBangumiId = "/api/v2/bangumi/bgmtv/{0}";
+
+  /// TMDB API Domain
+  static const String tmdbAPIDomain = 'https://api.themoviedb.org';
+  static const String tmdbAPIVersionPath = '/3';
 
   static String formatUrl(String url, List<dynamic> params) {
     for (int i = 0; i < params.length; i++) {
