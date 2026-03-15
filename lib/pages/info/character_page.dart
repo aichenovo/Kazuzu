@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:aura/request/tmdb.dart';
-import 'package:aura/bean/card/network_img_layer.dart';
-import 'package:aura/bean/widget/error_widget.dart';
+import 'package:kazumi/request/tmdb.dart';
+import 'package:kazumi/bean/card/network_img_layer.dart';
+import 'package:kazumi/bean/widget/error_widget.dart';
 
 class CharacterPage extends StatefulWidget {
   const CharacterPage({super.key, required this.characterID});
