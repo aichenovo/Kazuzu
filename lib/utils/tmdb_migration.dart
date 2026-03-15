@@ -1,11 +1,11 @@
-import 'package:aura/request/tmdb.dart';
-import 'package:aura/utils/logger.dart';
-import 'package:aura/utils/storage.dart';
-import 'package:aura/utils/string_match.dart';
-import 'package:aura/modules/collect/collect_module.dart';
-import 'package:aura/modules/history/history_module.dart';
-import 'package:aura/modules/bangumi/bangumi_item.dart';
-import 'package:aura/config/tmdb_config.dart';
+import 'package:kazumi/request/tmdb.dart';
+import 'package:kazumi/utils/logger.dart';
+import 'package:kazumi/utils/storage.dart';
+import 'package:kazumi/utils/string_match.dart';
+import 'package:kazumi/modules/collect/collect_module.dart';
+import 'package:kazumi/modules/history/history_module.dart';
+import 'package:kazumi/modules/bangumi/bangumi_item.dart';
+import 'package:kazumi/config/tmdb_config.dart';
 
 class TmdbMigration {
   static Future<void> migrateIfNeeded({int maxItems = 50}) async {
