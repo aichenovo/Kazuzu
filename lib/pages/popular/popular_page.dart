@@ -1,20 +1,20 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:aura/bean/dialog/dialog_helper.dart';
-import 'package:aura/bean/widget/error_widget.dart';
-import 'package:aura/bean/widget/custom_dropdown_menu.dart';
-import 'package:aura/pages/popular/popular_controller.dart';
-import 'package:aura/bean/card/bangumi_card.dart';
-import 'package:aura/utils/constants.dart';
+import 'package:kazumi/bean/dialog/dialog_helper.dart';
+import 'package:kazumi/bean/widget/error_widget.dart';
+import 'package:kazumi/bean/widget/custom_dropdown_menu.dart';
+import 'package:kazumi/pages/popular/popular_controller.dart';
+import 'package:kazumi/bean/card/bangumi_card.dart';
+import 'package:kazumi/utils/constants.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter/services.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:aura/utils/utils.dart';
-import 'package:aura/utils/logger.dart';
-import 'package:aura/pages/menu/menu.dart';
-import 'package:aura/utils/storage.dart';
-import 'package:aura/bean/appbar/drag_to_move_bar.dart' as dtb;
+import 'package:kazumi/utils/utils.dart';
+import 'package:kazumi/utils/logger.dart';
+import 'package:kazumi/pages/menu/menu.dart';
+import 'package:kazumi/utils/storage.dart';
+import 'package:kazumi/bean/appbar/drag_to_move_bar.dart' as dtb;
 
 class PopularPage extends StatefulWidget {
   const PopularPage({super.key});
