@@ -336,11 +336,20 @@ abstract class _VideoPageController with Store {
 
   Future<void> queryBangumiEpisodeCommentsByID(int id, int episode) async {
     episodeCommentsList.clear();
-    episodeInfo = await TMDBHTTP.getBangumiEpisodeByID(id, episode);
-    await BangumiHTTP.getBangumiCommentsByEpisodeID(episodeInfo.id)
-        .then((value) {
-      episodeCommentsList.addAll(value.commentList);
-    });
+    final String mediaType = bangumiItem.type == 1 ? 'movie' : 'tv';
+    final reviews = await TMDBHTTP.getReviews(id, mediaType: mediaType);
+    for (final r in reviews) {
+      episodeCommentsList.add(
+        EpisodeCommentItem(
+          comment: EpisodeComment(
+            user: r.user,
+            comment: r.comment.comment,
+            createdAt: r.comment.updatedAt,
+          ),
+          replies: const [],
+        ),
+      );
+    }
     if (!isCommentsAscending) {
       episodeCommentsList
           .sort((a, b) => b.comment.createdAt.compareTo(a.comment.createdAt));
