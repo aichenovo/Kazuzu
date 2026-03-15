@@ -1,9 +1,9 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:aura/modules/bangumi/bangumi_item.dart';
-import 'package:aura/request/tmdb.dart';
-import 'package:aura/utils/anime_season.dart';
-import 'package:aura/repositories/collect_repository.dart';
-import 'package:aura/modules/collect/collect_type.dart';
+import 'package:kazumi/modules/bangumi/bangumi_item.dart';
+import 'package:kazumi/request/tmdb.dart';
+import 'package:kazumi/utils/anime_season.dart';
+import 'package:kazumi/repositories/collect_repository.dart';
+import 'package:kazumi/modules/collect/collect_type.dart';
 import 'package:mobx/mobx.dart';
 
 part 'timeline_controller.g.dart';
