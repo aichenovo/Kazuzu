@@ -1,13 +1,13 @@
 import 'dart:io';
 import 'package:hive_ce/hive.dart';
-import 'package:aura/utils/logger.dart';
+import 'package:kazumi/utils/logger.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:aura/modules/bangumi/bangumi_item.dart';
-import 'package:aura/modules/bangumi/bangumi_tag.dart';
-import 'package:aura/modules/history/history_module.dart';
-import 'package:aura/modules/collect/collect_module.dart';
-import 'package:aura/modules/collect/collect_change_module.dart';
-import 'package:aura/modules/search/search_history_module.dart';
+import 'package:kazumi/modules/bangumi/bangumi_item.dart';
+import 'package:kazumi/modules/bangumi/bangumi_tag.dart';
+import 'package:kazumi/modules/history/history_module.dart';
+import 'package:kazumi/modules/collect/collect_module.dart';
+import 'package:kazumi/modules/collect/collect_change_module.dart';
+import 'package:kazumi/modules/search/search_history_module.dart';
 
 class GStorage {
   /// Don't use favorites box, it's replaced by collectibles.
