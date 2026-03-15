@@ -1,12 +1,12 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
-import 'package:aura/modules/bangumi/bangumi_item.dart';
-import 'package:aura/request/tmdb.dart';
-import 'package:aura/utils/search_parser.dart';
-import 'package:aura/modules/search/search_history_module.dart';
-import 'package:aura/repositories/collect_repository.dart';
-import 'package:aura/repositories/search_history_repository.dart';
-import 'package:aura/modules/collect/collect_type.dart';
+import 'package:kazumi/modules/bangumi/bangumi_item.dart';
+import 'package:kazumi/request/tmdb.dart';
+import 'package:kazumi/utils/search_parser.dart';
+import 'package:kazumi/modules/search/search_history_module.dart';
+import 'package:kazumi/repositories/collect_repository.dart';
+import 'package:kazumi/repositories/search_history_repository.dart';
+import 'package:kazumi/modules/collect/collect_type.dart';
 
 part 'search_controller.g.dart';
 
