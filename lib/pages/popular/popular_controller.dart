@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:aura/request/tmdb.dart';
-import 'package:aura/modules/bangumi/bangumi_item.dart';
-import 'package:aura/utils/constants.dart';
+import 'package:kazumi/request/tmdb.dart';
+import 'package:kazumi/modules/bangumi/bangumi_item.dart';
+import 'package:kazumi/utils/constants.dart';
 import 'package:mobx/mobx.dart';
 
 part 'popular_controller.g.dart';
