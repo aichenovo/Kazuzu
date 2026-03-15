@@ -1,8 +1,8 @@
 class Api {
   /// 当前版本
-  static const String version = '1.9.4';
+  static const String version = '2.0.5';
   /// 规则API级别
-  static const int apiLevel = 5;
+  static const int apiLevel = 6;
   /// 项目主页
   static const String projectUrl = "https://github.com/EKONG-E/Aura";
   /// Github 项目主页
