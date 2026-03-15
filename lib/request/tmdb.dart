@@ -1,15 +1,15 @@
-import 'package:aura/request/api.dart';
-import 'package:aura/request/request.dart';
-import 'package:aura/bean/dialog/dialog_helper.dart';
-import 'package:aura/utils/logger.dart';
-import 'package:aura/utils/utils.dart';
-import 'package:aura/modules/bangumi/bangumi_item.dart';
-import 'package:aura/modules/bangumi/bangumi_tag.dart';
-import 'package:aura/modules/comments/comment_item.dart';
-import 'package:aura/modules/characters/character_item.dart';
-import 'package:aura/modules/characters/actor_item.dart';
-import 'package:aura/modules/staff/staff_item.dart';
-import 'package:aura/config/tmdb_config.dart';
+import 'package:kazumi/request/api.dart';
+import 'package:kazumi/request/request.dart';
+import 'package:kazumi/bean/dialog/dialog_helper.dart';
+import 'package:kazumi/utils/logger.dart';
+import 'package:kazumi/utils/utils.dart';
+import 'package:kazumi/modules/bangumi/bangumi_item.dart';
+import 'package:kazumi/modules/bangumi/bangumi_tag.dart';
+import 'package:kazumi/modules/comments/comment_item.dart';
+import 'package:kazumi/modules/characters/character_item.dart';
+import 'package:kazumi/modules/characters/actor_item.dart';
+import 'package:kazumi/modules/staff/staff_item.dart';
+import 'package:kazumi/config/tmdb_config.dart';
 
 class TMDBHTTP {
   static bool _missingConfigToastShown = false;
