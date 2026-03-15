@@ -8,6 +8,7 @@ import 'package:kazumi/modules/history/history_module.dart';
 import 'package:kazumi/modules/collect/collect_module.dart';
 import 'package:kazumi/modules/collect/collect_change_module.dart';
 import 'package:kazumi/modules/search/search_history_module.dart';
+import 'package:kazumi/modules/download/download_module.dart';
 
 class GStorage {
   /// Don't use favorites box, it's replaced by collectibles.
@@ -20,8 +21,14 @@ class GStorage {
   static late Box<String> shieldList;
   static late final Box<dynamic> setting;
   static late Box<SearchHistory> searchHistory;
+  static late Box<DownloadRecord> downloads;
+
+  /// Hive directory path, initialized during init()
+  static String? _hivePath;
 
   static Future init() async {
+    _hivePath = '${(await getApplicationSupportDirectory()).path}/hive';
+
     Hive.registerAdapter(BangumiItemAdapter());
     Hive.registerAdapter(BangumiTagAdapter());
     Hive.registerAdapter(CollectedBangumiAdapter());
@@ -29,6 +36,10 @@ class GStorage {
     Hive.registerAdapter(HistoryAdapter());
     Hive.registerAdapter(CollectedBangumiChangeAdapter());
     Hive.registerAdapter(SearchHistoryAdapter());
+    Hive.registerAdapter(DownloadRecordAdapter());
+    Hive.registerAdapter(DownloadEpisodeAdapter());
+
+    // Open each box with automatic recovery on corruption
     favorites = await Hive.openBox('favorites');
     collectibles = await Hive.openBox('collectibles');
     histories = await Hive.openBox('histories');
@@ -36,8 +47,53 @@ class GStorage {
     collectChanges = await Hive.openBox('collectchanges');
     tmdbCollectiblesBackup = await Hive.openBox('tmdbCollectiblesBackup');
     tmdbHistoriesBackup = await Hive.openBox('tmdbHistoriesBackup');
-    shieldList = await Hive.openBox('shieldList');
-    searchHistory = await Hive.openBox('searchHistory');
+    shieldList = await Hive.openBox<String>('shieldList');
+    searchHistory = await Hive.openBox<SearchHistory>('searchHistory');
+    downloads = await Hive.openBox<DownloadRecord>('downloads');
+  }
+
+  /// Open a Hive box with automatic recovery on corruption.
+  /// If the box is corrupted, delete it and create a new empty one.
+  static Future<Box<T>> _openBoxSafe<T>(String boxName) async {
+    try {
+      return await Hive.openBox<T>(boxName);
+    } catch (e) {
+      KazumiLogger().e('GStorage: Box "$boxName" corrupted, attempting recovery', error: e);
+
+      // Delete the corrupted box files
+      await _deleteBoxFiles(boxName);
+
+      // Try to open again (will create a new empty box)
+      try {
+        final box = await Hive.openBox<T>(boxName);
+        KazumiLogger().i('GStorage: Box "$boxName" recovered successfully (data lost)');
+        return box;
+      } catch (e2) {
+        KazumiLogger().e('GStorage: Failed to recover box "$boxName"', error: e2);
+        rethrow;
+      }
+    }
+  }
+
+  /// Delete Hive box files for a given box name
+  static Future<void> _deleteBoxFiles(String boxName) async {
+    if (_hivePath == null) return;
+
+    final boxFile = File('$_hivePath/$boxName.hive');
+    final lockFile = File('$_hivePath/$boxName.lock');
+
+    try {
+      if (await boxFile.exists()) {
+        await boxFile.delete();
+        KazumiLogger().i('GStorage: Deleted corrupted box file: $boxName.hive');
+      }
+      if (await lockFile.exists()) {
+        await lockFile.delete();
+        KazumiLogger().i('GStorage: Deleted lock file: $boxName.lock');
+      }
+    } catch (e) {
+      KazumiLogger().e('GStorage: Failed to delete box files for "$boxName"', error: e);
+    }
   }
 
   static Future<void> backupBox(String boxName, String backupFilePath) async {
@@ -79,7 +135,8 @@ class GStorage {
     final tempBox =
         await Hive.openBox('tempCollectiblesBox', bytes: backupContent);
     final tempBoxItems = tempBox.toMap().entries;
-    KazumiLogger().i('WebDav: restoring collectibles. tempCollectiblesBox length ${tempBoxItems.length}');
+    KazumiLogger().i(
+        'WebDav: restoring collectibles. tempCollectiblesBox length ${tempBoxItems.length}');
 
     await collectibles.clear();
     for (var tempBoxItem in tempBoxItems) {
@@ -95,7 +152,8 @@ class GStorage {
     final tempBox =
         await Hive.openBox('tempCollectiblesBox', bytes: backupContent);
     final tempBoxItems = tempBox.toMap().entries;
-    KazumiLogger().i('WebDav: get collectibles from file. tempCollectiblesBox length ${tempBoxItems.length}');
+    KazumiLogger().i(
+        'WebDav: get collectibles from file. tempCollectiblesBox length ${tempBoxItems.length}');
 
     final List<CollectedBangumi> collectibles = [];
     for (var tempBoxItem in tempBoxItems) {
@@ -112,7 +170,8 @@ class GStorage {
     final tempBox =
         await Hive.openBox('tempCollectChangesBox', bytes: backupContent);
     final tempBoxItems = tempBox.toMap().entries;
-    KazumiLogger().i('WebDav: get collectChanges from file. tempCollectChangesBox length ${tempBoxItems.length}');
+    KazumiLogger().i(
+        'WebDav: get collectChanges from file. tempCollectChangesBox length ${tempBoxItems.length}');
 
     final List<CollectedBangumiChange> collectChanges = [];
     for (var tempBoxItem in tempBoxItems) {
@@ -142,8 +201,8 @@ class GStorage {
       // We can directly remove the item from the remote list.
       if (change.action == 3) {
         // Action 3: delete
-        remoteCollectibles.removeWhere(
-            (b) => b.bangumiItem.id == change.bangumiID);
+        remoteCollectibles
+            .removeWhere((b) => b.bangumiItem.id == change.bangumiID);
       } else {
         // For add/update, we still need to look up the local collectible.
         final changedBangumiID = change.bangumiID.toString();
@@ -215,17 +274,20 @@ class SettingBoxKey {
       autoUpdate = 'autoUpdate',
       alwaysOntop = 'alwaysOntop',
       defaultPlaySpeed = 'defaultPlaySpeed',
+      defaultShortcutForwardPlaySpeed = 'defaultShortcutForwardPlaySpeed',
       defaultAspectRatioType = 'defaultAspectRatioType',
       buttonSkipTime = 'buttonSkipTime',
       arrowKeySkipTime = 'arrowKeySkipTime',
       danmakuEnhance = 'danmakuEnhance',
       danmakuBorder = 'danmakuBorder',
+      danmakuBorderSize = 'danmakuBorderSize',
       danmakuOpacity = 'danmakuOpacity',
       danmakuFontSize = 'danmakuFontSize',
       danmakuTop = 'danmakuTop',
       danmakuScroll = 'danmakuScroll',
       danmakuBottom = 'danmakuBottom',
       danmakuMassive = 'danmakuMassive',
+      danmakuDeduplication = 'danmakuDeduplication',
       danmakuArea = 'danmakuArea',
       danmakuColor = 'danmakuColor',
       danmakuDuration = 'danmakuDuration',
@@ -247,6 +309,7 @@ class SettingBoxKey {
       displayMode = 'displayMode',
       enableGitProxy = 'enableGitProxy',
       enableSystemProxy = 'enableSystemProxy',
+      defaultStartupPage = 'defaultStartupPage',
       /// Deprecated
       isWideScreen = 'isWideScreen',
       webDavEnable = 'webDavEnable',
@@ -262,6 +325,7 @@ class SettingBoxKey {
       playerDebugMode = 'playerDebugMode',
       syncPlayEndPoint = 'syncPlayEndPoint',
       androidEnableOpenSLES = 'androidEnableOpenSLES',
+      androidVideoRenderer = 'androidVideoRenderer',
       defaultSuperResolutionType = 'defaultSuperResolutionType',
       superResolutionWarn = 'superResolutionWarn',
       playerDisableAnimations = 'playerDisableAnimations',
@@ -276,4 +340,9 @@ class SettingBoxKey {
       proxyConfigured = 'proxyConfigured',
       proxyUrl = 'proxyUrl',
       tmdbMigrationDone = 'tmdbMigrationDone';
+      proxyTestUrl = 'proxyTestUrl',
+      showRating = 'showRating',
+      downloadParallelEpisodes = 'downloadParallelEpisodes',
+      downloadParallelSegments = 'downloadParallelSegments',
+      downloadDanmaku = 'downloadDanmaku';
 }
