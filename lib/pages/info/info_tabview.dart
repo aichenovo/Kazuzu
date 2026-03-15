@@ -1,15 +1,15 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:aura/bean/widget/error_widget.dart';
-import 'package:aura/bean/card/comments_card.dart';
-import 'package:aura/bean/card/character_card.dart';
-import 'package:aura/utils/utils.dart';
+import 'package:kazumi/bean/widget/error_widget.dart';
+import 'package:kazumi/bean/card/comments_card.dart';
+import 'package:kazumi/bean/card/character_card.dart';
+import 'package:kazumi/utils/utils.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import 'package:aura/modules/bangumi/bangumi_item.dart';
-import 'package:aura/modules/comments/comment_item.dart';
-import 'package:aura/modules/characters/character_item.dart';
-import 'package:aura/modules/staff/staff_item.dart';
+import 'package:kazumi/modules/bangumi/bangumi_item.dart';
+import 'package:kazumi/modules/comments/comment_item.dart';
+import 'package:kazumi/modules/characters/character_item.dart';
+import 'package:kazumi/modules/staff/staff_item.dart';
 
 class InfoTabView extends StatefulWidget {
   const InfoTabView({
