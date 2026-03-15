@@ -1,22 +1,22 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:aura/app_module.dart';
-import 'package:aura/app_widget.dart';
+import 'package:kazumi/app_module.dart';
+import 'package:kazumi/app_widget.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:aura/bean/settings/theme_provider.dart';
+import 'package:kazumi/bean/settings/theme_provider.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:aura/utils/storage.dart';
+import 'package:kazumi/utils/storage.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
-import 'package:aura/request/request.dart';
-import 'package:aura/utils/proxy_manager.dart';
+import 'package:kazumi/request/request.dart';
+import 'package:kazumi/utils/proxy_manager.dart';
 import 'package:flutter/services.dart';
-import 'package:aura/utils/utils.dart';
+import 'package:kazumi/utils/utils.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:aura/pages/error/storage_error_page.dart';
+import 'package:kazumi/pages/error/storage_error_page.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:aura/utils/tmdb_migration.dart';
+import 'package:kazumi/utils/tmdb_migration.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
