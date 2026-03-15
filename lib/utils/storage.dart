@@ -339,7 +339,7 @@ class SettingBoxKey {
       proxyEnable = 'proxyEnable',
       proxyConfigured = 'proxyConfigured',
       proxyUrl = 'proxyUrl',
-      tmdbMigrationDone = 'tmdbMigrationDone';
+      tmdbMigrationDone = 'tmdbMigrationDone',
       proxyTestUrl = 'proxyTestUrl',
       showRating = 'showRating',
       downloadParallelEpisodes = 'downloadParallelEpisodes',
