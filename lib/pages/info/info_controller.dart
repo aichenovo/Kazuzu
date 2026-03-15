@@ -1,14 +1,14 @@
-import 'package:aura/bean/dialog/dialog_helper.dart';
-import 'package:aura/modules/bangumi/bangumi_item.dart';
-import 'package:aura/pages/collect/collect_controller.dart';
+import 'package:kazumi/bean/dialog/dialog_helper.dart';
+import 'package:kazumi/modules/bangumi/bangumi_item.dart';
+import 'package:kazumi/pages/collect/collect_controller.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:aura/modules/search/plugin_search_module.dart';
-import 'package:aura/request/tmdb.dart';
+import 'package:kazumi/modules/search/plugin_search_module.dart';
+import 'package:kazumi/request/tmdb.dart';
 import 'package:mobx/mobx.dart';
-import 'package:aura/utils/logger.dart';
-import 'package:aura/modules/comments/comment_item.dart';
-import 'package:aura/modules/characters/character_item.dart';
-import 'package:aura/modules/staff/staff_item.dart';
+import 'package:kazumi/utils/logger.dart';
+import 'package:kazumi/modules/comments/comment_item.dart';
+import 'package:kazumi/modules/characters/character_item.dart';
+import 'package:kazumi/modules/staff/staff_item.dart';
 
 part 'info_controller.g.dart';
 
