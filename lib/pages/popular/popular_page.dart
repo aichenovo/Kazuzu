@@ -1,20 +1,20 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:kazumi/bean/dialog/dialog_helper.dart';
-import 'package:kazumi/bean/widget/error_widget.dart';
-import 'package:kazumi/bean/widget/custom_dropdown_menu.dart';
-import 'package:kazumi/pages/popular/popular_controller.dart';
-import 'package:kazumi/bean/card/bangumi_card.dart';
-import 'package:kazumi/utils/constants.dart';
+import 'package:aura/bean/dialog/dialog_helper.dart';
+import 'package:aura/bean/widget/error_widget.dart';
+import 'package:aura/bean/widget/custom_dropdown_menu.dart';
+import 'package:aura/pages/popular/popular_controller.dart';
+import 'package:aura/bean/card/bangumi_card.dart';
+import 'package:aura/utils/constants.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter/services.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:kazumi/utils/utils.dart';
-import 'package:kazumi/utils/logger.dart';
-import 'package:kazumi/pages/menu/menu.dart';
-import 'package:kazumi/utils/storage.dart';
-import 'package:kazumi/bean/appbar/drag_to_move_bar.dart' as dtb;
+import 'package:aura/utils/utils.dart';
+import 'package:aura/utils/logger.dart';
+import 'package:aura/pages/menu/menu.dart';
+import 'package:aura/utils/storage.dart';
+import 'package:aura/bean/appbar/drag_to_move_bar.dart' as dtb;
 
 class PopularPage extends StatefulWidget {
   const PopularPage({super.key});
@@ -239,7 +239,7 @@ class _PopularPageState extends State<PopularPage>
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                isTrend ? '热门番组' : popularController.currentTag,
+                                isTrend ? '热门' : popularController.currentTag,
                                 style: theme.textTheme.headlineMedium!.copyWith(
                                   fontWeight: fontWeight,
                                   fontSize: fontSize,
@@ -313,12 +313,12 @@ class _PopularPageState extends State<PopularPage>
             offset: offset,
             buttonSize: size,
             animation: animation,
-            maxWidth: 80,
+            maxWidth: 120,
             items: [
               '',
-              ...defaultAnimeTags,
+              ...defaultExploreTags,
             ],
-            itemBuilder: (item) => item.isEmpty ? '热门番组' : item,
+            itemBuilder: (item) => item.isEmpty ? '热门' : item,
           );
         },
         transitionDuration: const Duration(milliseconds: 200),
