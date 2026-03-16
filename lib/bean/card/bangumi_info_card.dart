@@ -169,7 +169,7 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '放送开始:',
+                              '首播日期:',
                             ),
                             Text(
                               widget.bangumiItem.airDate == ''
