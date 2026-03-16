@@ -175,7 +175,7 @@ class _AppWidgetState extends State<AppWidget>
     }
 
     if (!Platform.isLinux) {
-      await trayManager.setToolTip('Kazumi');
+      await trayManager.setToolTip('Sad');
     }
 
     Menu trayMenu = Menu(items: [
