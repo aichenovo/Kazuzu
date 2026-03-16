@@ -80,7 +80,7 @@ class _CollectPageState extends State<CollectPage>
             tabs: tabs,
             indicatorColor: Theme.of(context).colorScheme.primary,
           ),
-          title: const Text('追番'),
+          title: const Text('收藏'),
           actions: [
             IconButton(
                 onPressed: () {
@@ -136,7 +136,7 @@ class _CollectPageState extends State<CollectPage>
       );
     } else {
       return const Center(
-        child: Text('啊嘞, 没有追番的说 (´;ω;`)'),
+        child: Text('𝗖𝗶𝗮𝗹𝗹𝗼～(∠・ω< )⌒☆，还没有收藏的内容哦(´;ω;`)'),
       );
     }
   }
