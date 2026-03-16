@@ -4,22 +4,22 @@ class Api {
   /// 规则API级别
   static const int apiLevel = 6;
   /// 项目主页
-  static const String projectUrl = "https://github.com/EKONG-E/Aura";
+  static const String projectUrl = "";
   /// Github 项目主页
-  static const String sourceUrl = "https://github.com/EKONG-E/Aura";
+  static const String sourceUrl = "";
   /// 图标作者
-  static const String iconUrl = "https://www.pixiv.net/users/66219277";
+  static const String iconUrl = "";
   /// 规则仓库
   static const String pluginShop = 'https://raw.githubusercontent.com/Predidit/KazumiRules/main/';
   /// 在线升级
   static const String latestApp =
-      'https://api.github.com/repos/EKONG-E/Aura/releases/latest'; 
+      ''; 
   /// Github镜像
   static const String gitMirror = 'https://ghfast.top/';
   /// 弹弹官网
   static const String dandanIndex = 'https://www.dandanplay.com/';
   /// Bangumi 官网
-  static const String bangumiIndex = 'https://bangumi.tv/';
+  static const String bangumiIndex = 'https://github.com/huangxd-/danmu_api';
   /// TMDB 官网
   static const String tmdbIndex = 'https://www.themoviedb.org/';
 
@@ -54,7 +54,7 @@ class Api {
   static const String bangumiStaffByIDNext = '/p1/subjects/{0}/staffs/persons';
 
   /// DanDanPlay API Domain
-  static const String dandanAPIDomain = 'https://api.dandanplay.net';
+  static const String dandanAPIDomain = 'https://paejay.asia';
   /// 获取弹幕
   static const String dandanAPIComment = "/api/v2/comment/";
   /// 检索弹弹番剧元数据
