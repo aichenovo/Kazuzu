@@ -16,7 +16,6 @@ class AboutModule extends Module {
       "/license",
       child: (_) => const LicensePage(
         applicationName: 'Sad',
-        applicationVersion: 1.0.0,
         applicationLegalese: '开源许可证',
       ),
     );
