@@ -178,7 +178,7 @@ class _InfoPageState extends State<InfoPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> tabs = <String>['概览', '吐槽', '角色', '评论', '制作人员'];
+    final List<String> tabs = <String>['概览', '影评', '角色', '制作人员'];
     final bool showWindowButton = GStorage.setting
         .get(SettingBoxKey.showWindowButton, defaultValue: false);
     return PopScope(
