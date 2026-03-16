@@ -22,14 +22,13 @@ class AboutPage extends StatefulWidget {
 }
 
 class _AboutPageState extends State<AboutPage> {
-  final exitBehaviorTitles = <String>['退出 Kazumi', '最小化至托盘', '每次都询问'];
+  final exitBehaviorTitles = <String>['退出 Sad', '最小化至托盘', '每次都询问'];
   late dynamic defaultDanmakuArea;
   late dynamic defaultThemeMode;
   late dynamic defaultThemeColor;
   Box setting = GStorage.setting;
   late int exitBehavior =
       setting.get(SettingBoxKey.exitBehavior, defaultValue: 2);
-  late bool autoUpdate;
   double _cacheSizeMB = -1;
   final MyController myController = Modular.get<MyController>();
   final MenuController menuController = MenuController();
@@ -37,7 +36,6 @@ class _AboutPageState extends State<AboutPage> {
   @override
   void initState() {
     super.initState();
-    autoUpdate = setting.get(SettingBoxKey.autoUpdate, defaultValue: true);
     _getCacheSize();
   }
 
@@ -102,7 +100,7 @@ class _AboutPageState extends State<AboutPage> {
       builder: (context) {
         return AlertDialog(
           title: const Text('缓存管理'),
-          content: const Text('缓存为番剧封面, 清除后加载时需要重新下载,确认要清除缓存吗?'),
+          content: const Text('缓存为作品封面，清除后加载时需要重新下载，确认要清除缓存吗？'),
           actions: [
             TextButton(
               onPressed: () {
@@ -154,38 +152,53 @@ class _AboutPageState extends State<AboutPage> {
               ],
             ),
             SettingsSection(
-              title: Text('外部链接', style: TextStyle(fontFamily: fontFamily)),
+              title: Text('开发者信息', style: TextStyle(fontFamily: fontFamily)),
               tiles: [
                 SettingsTile.navigation(
+                  title: Text('当前版本', style: TextStyle(fontFamily: fontFamily)),
+                  value: Text('1.0.0', style: TextStyle(fontFamily: fontFamily)),
+                ),
+                SettingsTile.navigation(
                   onPressed: (_) {
-                    launchUrl(Uri.parse(Api.projectUrl),
+                    launchUrl(Uri.parse('https://t.me/wlsad'),
                         mode: LaunchMode.externalApplication);
                   },
-                  title: Text('项目主页', style: TextStyle(fontFamily: fontFamily)),
+                  title: Text('问题反馈', style: TextStyle(fontFamily: fontFamily)),
+                  value: Text('Telegram', style: TextStyle(fontFamily: fontFamily)),
                 ),
+              ],
+            ),
+            SettingsSection(
+              title: Text('外部链接', style: TextStyle(fontFamily: fontFamily)),
+              tiles: [
                 SettingsTile.navigation(
                   onPressed: (_) {
                     launchUrl(Uri.parse(Api.sourceUrl),
                         mode: LaunchMode.externalApplication);
                   },
-                  title: Text('代码仓库', style: TextStyle(fontFamily: fontFamily)),
-                  value: Text('Github', style: TextStyle(fontFamily: fontFamily)),
+                  title: Text('未开放', style: TextStyle(fontFamily: fontFamily)),
+                  value: Text('未开放', style: TextStyle(fontFamily: fontFamily)),
                 ),
                 SettingsTile.navigation(
                   onPressed: (_) {
                     launchUrl(Uri.parse(Api.iconUrl),
                         mode: LaunchMode.externalApplication);
                   },
-                  title: Text('图标创作', style: TextStyle(fontFamily: fontFamily)),
-                  value: Text('Pixiv', style: TextStyle(fontFamily: fontFamily)),
+                  title: Text('未开放', style: TextStyle(fontFamily: fontFamily)),
+                  value: Text('未开放', style: TextStyle(fontFamily: fontFamily)),
                 ),
+              ],
+            ),
+            SettingsSection(
+              title: Text('数据来源', style: TextStyle(fontFamily: fontFamily)),
+              tiles: [
                 SettingsTile.navigation(
                   onPressed: (_) {
-                    launchUrl(Uri.parse(Api.bangumiIndex),
+                    launchUrl(Uri.parse(Api.tmdbIndex),
                         mode: LaunchMode.externalApplication);
                   },
-                  title: Text('番剧索引', style: TextStyle(fontFamily: fontFamily)),
-                  value: Text('Bangumi', style: TextStyle(fontFamily: fontFamily)),
+                  title: Text('搜索引擎', style: TextStyle(fontFamily: fontFamily)),
+                  value: Text('TMDB', style: TextStyle(fontFamily: fontFamily)),
                 ),
                 SettingsTile.navigation(
                   onPressed: (_) {
@@ -193,8 +206,8 @@ class _AboutPageState extends State<AboutPage> {
                         mode: LaunchMode.externalApplication);
                   },
                   title: Text('弹幕来源', style: TextStyle(fontFamily: fontFamily)),
-                  description: Text('ID: ${mortis['id']}', style: TextStyle(fontFamily: fontFamily)),
-                  value: Text('DanDanPlay', style: TextStyle(fontFamily: fontFamily)),
+                  description: Text('github', style: TextStyle(fontFamily: fontFamily)),
+                  value: Text('LogVar', style: TextStyle(fontFamily: fontFamily)),
                 ),
               ],
             ),
@@ -267,27 +280,6 @@ class _AboutPageState extends State<AboutPage> {
                   value: _cacheSizeMB == -1
                       ? Text('统计中...', style: TextStyle(fontFamily: fontFamily))
                       : Text('${_cacheSizeMB.toStringAsFixed(2)}MB', style: TextStyle(fontFamily: fontFamily)),
-                ),
-              ],
-            ),
-            SettingsSection(
-              title: Text('应用更新', style: TextStyle(fontFamily: fontFamily)),
-              tiles: [
-                SettingsTile.switchTile(
-                  onToggle: (value) async {
-                    autoUpdate = value ?? !autoUpdate;
-                    await setting.put(SettingBoxKey.autoUpdate, autoUpdate);
-                    setState(() {});
-                  },
-                  title: Text('自动更新', style: TextStyle(fontFamily: fontFamily)),
-                  initialValue: autoUpdate,
-                ),
-                SettingsTile.navigation(
-                  onPressed: (_) {
-                    myController.checkUpdate();
-                  },
-                  title: Text('检查更新', style: TextStyle(fontFamily: fontFamily)),
-                  value: Text('当前版本 ${Api.version}', style: TextStyle(fontFamily: fontFamily)),
                 ),
               ],
             ),
