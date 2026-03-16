@@ -48,6 +48,6 @@ class AnimeSeason {
   String toString() {
     var yas = _getYearAndSeason(_date);
 
-    return '${yas[0]}年${_seasons[yas[1]]}新番';
+    return '${yas[0]}年${_seasons[yas[1]]}上新';
   }
 }
