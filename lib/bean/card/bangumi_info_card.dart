@@ -230,7 +230,7 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
                               ),
                             SizedBox(height: 8),
                             Text(
-                              'Bangumi Ranked:',
+                              'TMDB ID:',
                             ),
                             Text(
                               widget.showRating
