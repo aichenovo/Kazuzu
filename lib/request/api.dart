@@ -17,7 +17,7 @@ class Api {
   /// Github镜像
   static const String gitMirror = 'https://ghfast.top/';
   /// 弹弹官网
-  static const String dandanIndex = 'https://www.dandanplay.com/';
+  static const String dandanIndex = 'https://github.com/huangxd-/danmu_api';
   /// Bangumi 官网
   static const String bangumiIndex = 'https://github.com/huangxd-/danmu_api';
   /// TMDB 官网
