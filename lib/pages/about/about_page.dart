@@ -164,7 +164,7 @@ class _AboutPageState extends State<AboutPage> {
                         mode: LaunchMode.externalApplication);
                   },
                   title: Text('问题反馈', style: TextStyle(fontFamily: fontFamily)),
-                  value: Text('Telegram', style: TextStyle(fontFamily: fontFamily)),
+                  value: Text('tg:wlsad', style: TextStyle(fontFamily: fontFamily)),
                 ),
               ],
             ),
