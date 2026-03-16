@@ -102,12 +102,12 @@ class _ScaffoldMenu extends State<ScaffoldMenu> {
                   NavigationDestination(
                     selectedIcon: Icon(Icons.favorite),
                     icon: Icon(Icons.favorite_outlined),
-                    label: '追番',
+                    label: '收藏',
                   ),
                   NavigationDestination(
                     selectedIcon: Icon(Icons.settings),
                     icon: Icon(Icons.settings),
-                    label: '我的',
+                    label: '设置',
                   ),
                 ],
                 selectedIndex: state.selectedIndex,
@@ -152,12 +152,12 @@ class _ScaffoldMenu extends State<ScaffoldMenu> {
                   NavigationRailDestination(
                     selectedIcon: Icon(Icons.favorite),
                     icon: Icon(Icons.favorite_border),
-                    label: Text('追番'),
+                    label: Text('收藏'),
                   ),
                   NavigationRailDestination(
                     selectedIcon: Icon(Icons.settings),
                     icon: Icon(Icons.settings_outlined),
-                    label: Text('我的'),
+                    label: Text('设置'),
                   ),
                 ],
                 selectedIndex: state.selectedIndex,
