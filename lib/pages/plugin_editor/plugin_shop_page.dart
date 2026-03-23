@@ -21,7 +21,6 @@ class _PluginShopPageState extends State<PluginShopPage> {
   bool loading = false;
   late bool enableGitProxy;
 
-  // 排序方式状态：false=按更新时间排序，true=按名称排序
   bool sortByName = false;
   final PluginsController pluginsController = Modular.get<PluginsController>();
 
@@ -35,10 +34,11 @@ class _PluginShopPageState extends State<PluginShopPage> {
         setting.get(SettingBoxKey.enableGitProxy, defaultValue: false);
 
     // 初始化自定义链接
-    _customLinkController.text =
-        setting.get('customPluginLink', '') ?? '';
-    // 自动加载自定义链接的数据
+    _customLinkController.text = setting.get('customPluginLink') ?? '';
+
+    // 如果有自定义链接，设置给 controller 并刷新
     if (_customLinkController.text.isNotEmpty) {
+      pluginsController.pluginRepoUrl = _customLinkController.text;
       _handleRefresh();
     }
   }
@@ -61,26 +61,29 @@ class _PluginShopPageState extends State<PluginShopPage> {
     String link = _customLinkController.text.trim();
     if (link.isNotEmpty) {
       setting.put('customPluginLink', link);
-      _handleRefresh(customLink: link);
+
+      // 更新 controller 的仓库地址
+      pluginsController.pluginRepoUrl = link;
+
+      _handleRefresh();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('自定义链接已保存')),
+        const SnackBar(content: Text('自定义链接已保存')),
       );
     }
   }
 
-  // 刷新规则列表，支持自定义链接
-  void _handleRefresh({String? customLink}) async {
+  // 刷新规则列表
+  void _handleRefresh() async {
     if (!loading) {
       setState(() {
         loading = true;
         timeout = false;
       });
+
       enableGitProxy =
           setting.get(SettingBoxKey.enableGitProxy, defaultValue: false);
 
-      // 使用自定义链接查询
-      String queryLink = customLink ?? _customLinkController.text.trim();
-      pluginsController.queryPluginHTTPList(customLink: queryLink).then((_) {
+      pluginsController.queryPluginHTTPList().then((_) {
         setState(() {
           loading = false;
         });
@@ -112,89 +115,48 @@ class _PluginShopPageState extends State<PluginShopPage> {
       return ListView.builder(
         itemCount: sortedList.length,
         itemBuilder: (context, index) {
+          var plugin = sortedList[index];
           return Card(
             margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
             child: ListTile(
-              title: Row(
-                children: [
-                  Text(
-                    sortedList[index].name,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
+              title: Text(
+                plugin.name,
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 1.0),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.secondary,
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
-                        child: Text(
-                          sortedList[index].version,
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.surface),
-                        ),
-                      ),
+                      _buildTag(plugin.version, Theme.of(context).colorScheme.secondary),
                       const SizedBox(width: 5),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 1.0),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary,
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
-                        child: Text(
-                          sortedList[index].useNativePlayer
-                              ? "native"
-                              : "webview",
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.surface),
-                        ),
-                      ),
-                      if (sortedList[index].antiCrawlerEnabled) ...[
+                      _buildTag(plugin.useNativePlayer ? 'native' : 'webview',
+                          Theme.of(context).colorScheme.primary),
+                      if (plugin.antiCrawlerEnabled) ...[
                         const SizedBox(width: 5),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 1.0),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.tertiary,
-                            borderRadius: BorderRadius.circular(16.0),
-                          ),
-                          child: Text(
-                            'captcha',
-                            style: TextStyle(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onTertiary),
-                          ),
-                        ),
-                      ],
+                        _buildTag('captcha', Theme.of(context).colorScheme.tertiary,
+                            textColor: Theme.of(context).colorScheme.onTertiary),
+                      ]
                     ],
                   ),
-                  if (sortedList[index].lastUpdate > 0) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      '更新时间: ${DateTime.fromMillisecondsSinceEpoch(sortedList[index].lastUpdate).toString().split('.')[0]}',
-                      style: const TextStyle(color: Colors.grey),
+                  if (plugin.lastUpdate > 0)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        '更新时间: ${DateTime.fromMillisecondsSinceEpoch(plugin.lastUpdate).toString().split('.')[0]}',
+                        style: const TextStyle(color: Colors.grey),
+                      ),
                     ),
-                  ],
                 ],
               ),
               trailing: TextButton(
                 onPressed: () async {
-                  String status =
-                      pluginsController.pluginStatus(sortedList[index]);
+                  String status = pluginsController.pluginStatus(plugin);
                   if (status == 'install' || status == 'update') {
                     KazumiDialog.showToast(
                         message: status == 'install' ? '导入中' : '更新中');
-                    int res = await pluginsController
-                        .tryUpdatePluginByName(sortedList[index].name);
+                    int res =
+                        await pluginsController.tryUpdatePluginByName(plugin.name);
                     if (res == 0) {
                       KazumiDialog.showToast(
                           message: status == 'install' ? '导入成功' : '更新成功');
@@ -211,20 +173,31 @@ class _PluginShopPageState extends State<PluginShopPage> {
                     }
                   }
                 },
-                child: Text(pluginsController
-                            .pluginStatus(sortedList[index]) ==
-                        'install'
+                child: Text(pluginsController.pluginStatus(plugin) == 'install'
                     ? '安装'
-                    : (pluginsController.pluginStatus(sortedList[index]) ==
-                            'installed')
+                    : (pluginsController.pluginStatus(plugin) == 'installed'
                         ? '已安装'
-                        : '更新'),
+                        : '更新')),
               ),
             ),
           );
         },
       );
     });
+  }
+
+  Widget _buildTag(String text, Color bgColor, {Color? textColor}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(color: textColor ?? Colors.white),
+      ),
+    );
   }
 
   Widget get timeoutWidget {
@@ -240,9 +213,7 @@ class _PluginShopPageState extends State<PluginShopPage> {
             text: enableGitProxy ? '禁用镜像' : '启用镜像',
           ),
           GeneralErrorButton(
-            onPressed: () {
-              _handleRefresh();
-            },
+            onPressed: _handleRefresh,
             text: '刷新',
           ),
         ],
@@ -267,16 +238,14 @@ class _PluginShopPageState extends State<PluginShopPage> {
                 tooltip: sortByName ? '按名称排序' : '按更新时间排序',
                 icon: Icon(sortByName ? Icons.sort_by_alpha : Icons.access_time)),
             IconButton(
-                onPressed: () {
-                  _handleRefresh();
-                },
+                onPressed: _handleRefresh,
                 tooltip: '刷新规则列表',
-                icon: const Icon(Icons.refresh))
+                icon: const Icon(Icons.refresh)),
           ],
         ),
         body: Column(
           children: [
-            // 自定义链接输入栏
+            // 自定义仓库链接输入框
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Row(
@@ -287,7 +256,7 @@ class _PluginShopPageState extends State<PluginShopPage> {
                       decoration: InputDecoration(
                         labelText: '自定义插件仓库链接',
                         hintText: '请输入自定义链接',
-                        border: OutlineInputBorder(),
+                        border: const OutlineInputBorder(),
                       ),
                     ),
                   ),
