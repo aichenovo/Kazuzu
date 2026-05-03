@@ -4,22 +4,24 @@ class Api {
   /// 规则API级别
   static const int apiLevel = 6;
   /// 项目主页
-  static const String projectUrl = "https://kazumi.app/";
+  static const String projectUrl = "";
   /// Github 项目主页
-  static const String sourceUrl = "https://github.com/Predidit/Kazumi";
+  static const String sourceUrl = "";
   /// 图标作者
-  static const String iconUrl = "https://www.pixiv.net/users/66219277";
+  static const String iconUrl = "";
   /// 规则仓库
-  static const String pluginShop = 'https://raw.githubusercontent.com/Predidit/KazumiRules/main/';
+  static const String pluginShop = '';
   /// 在线升级
   static const String latestApp =
-      'https://api.github.com/repos/Predidit/Kazumi/releases/latest'; 
+      ''; 
   /// Github镜像
   static const String gitMirror = 'https://ghfast.top/';
   /// 弹弹官网
-  static const String dandanIndex = 'https://www.dandanplay.com/';
+  static const String dandanIndex = 'https://github.com/huangxd-/danmu_api';
   /// Bangumi 官网
-  static const String bangumiIndex = 'https://bangumi.tv/';
+  static const String bangumiIndex = 'https://github.com/huangxd-/danmu_api';
+  /// TMDB 官网
+  static const String tmdbIndex = 'https://www.themoviedb.org/';
 
   /// bangumi API Domain
   static const String bangumiAPIDomain = 'https://api.bgm.tv';
@@ -31,12 +33,6 @@ class Api {
   static const String bangumiCharacterByID = '/v0/subjects/{0}/characters';
   /// 从条目ID获取剧集ID
   static const String bangumiEpisodeByID = '/v0/episodes';
-  /// 返回当前 Access Token 对应的用户信息
-  static const String bangumiUsernameByToken = '/v0/me';
-  /// 新增或修改用户单个条目收藏
-  static const String bangumiSetCollection = '/v0/users/-/collections/{0}';
-  /// 获取用户收藏。用户名，分页参数1，分页参数2
-  static const String bangumiGetCollection = '/v0/users/{0}/collections?subject_type=2&limit={1}&offset={2}&type={3}';
 
   /// Bangumi Next API Domain
   static const String bangumiAPINextDomain = 'https://next.bgm.tv';
@@ -58,7 +54,7 @@ class Api {
   static const String bangumiStaffByIDNext = '/p1/subjects/{0}/staffs/persons';
 
   /// DanDanPlay API Domain
-  static const String dandanAPIDomain = 'https://api.dandanplay.net';
+  static const String dandanAPIDomain = 'https://paejay.asia';
   /// 获取弹幕
   static const String dandanAPIComment = "/api/v2/comment/";
   /// 检索弹弹番剧元数据
@@ -67,9 +63,13 @@ class Api {
   static const String dandanAPIInfo = "/api/v2/bangumi/";
   /// 获取弹弹番剧元数据（通过BGM番剧ID）
   static const String dandanAPIInfoByBgmBangumiId = "/api/v2/bangumi/bgmtv/{0}";
-
+  
   /// 图片识别番剧
   static const String traceApi = 'https://api.trace.moe/search';
+
+  /// TMDB API Domain
+  static const String tmdbAPIDomain = 'https://api.themoviedb.org';
+  static const String tmdbAPIVersionPath = '/3';
 
   static String formatUrl(String url, List<dynamic> params) {
     for (int i = 0; i < params.length; i++) {
