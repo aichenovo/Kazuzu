@@ -17,7 +17,7 @@ import 'package:kazumi/utils/logger.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:kazumi/modules/bangumi/episode_item.dart';
 import 'package:kazumi/modules/comments/comment_item.dart';
-import 'package:kazumi/request/bangumi.dart';
+import 'package:kazumi/request/tmdb.dart';
 import 'package:dio/dio.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:kazumi/utils/storage.dart';
@@ -53,7 +53,7 @@ abstract class _VideoPageController with Store {
   @observable
   bool isCommentsAscending = false;
 
-  /// 桌面画中画状态，Android 画中画状态不需要单独维护，进入画中画后会直接切换到系统的全局播放器界面
+  /// 画中画状态
   @observable
   bool isPip = false;
 
@@ -339,10 +339,20 @@ abstract class _VideoPageController with Store {
 
   Future<void> queryBangumiEpisodeCommentsByID(int id, int episode) async {
     episodeCommentsList.clear();
-    episodeInfo = await BangumiHTTP.getBangumiEpisodeByID(id, episode);
-    final value =
-        await BangumiHTTP.getBangumiCommentsByEpisodeID(episodeInfo.id);
-    episodeCommentsList.addAll(value.commentList);
+    final String mediaType = bangumiItem.type == 1 ? 'movie' : 'tv';
+    final reviews = await TMDBHTTP.getReviews(id, mediaType: mediaType);
+    for (final r in reviews) {
+      episodeCommentsList.add(
+        EpisodeCommentItem(
+          comment: EpisodeComment(
+            user: r.user,
+            comment: r.comment.comment,
+            createdAt: r.comment.updatedAt,
+          ),
+          replies: const [],
+        ),
+      );
+    }
     if (!isCommentsAscending) {
       episodeCommentsList
           .sort((a, b) => b.comment.createdAt.compareTo(a.comment.createdAt));
