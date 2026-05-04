@@ -2,12 +2,16 @@ import 'dart:io';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 import 'package:kazumi/modules/bangumi/bangumi_item.dart';
+import 'package:kazumi/modules/collect/collect_type.dart';
+import 'package:kazumi/modules/search/image_search_module.dart';
 import 'package:kazumi/request/tmdb.dart';
 import 'package:kazumi/utils/search_parser.dart';
 import 'package:kazumi/modules/search/search_history_module.dart';
 import 'package:kazumi/repositories/collect_repository.dart';
 import 'package:kazumi/repositories/search_history_repository.dart';
-import 'package:kazumi/modules/collect/collect_type.dart';
+import 'package:kazumi/request/bangumi.dart';
+import 'package:kazumi/request/trace.dart';
+import 'package:kazumi/utils/search_parser.dart';
 
 part 'search_controller.g.dart';
 
@@ -85,7 +89,7 @@ abstract class _SearchPageController with Store {
     SearchParser parser = SearchParser(input);
     String? idString = parser.parseId();
     String? tag = parser.parseTag();
-    String? genreIdString = parser.parseGenreId();
+    String? sort = parser.parseSort();
     String keywords = parser.parseKeywords();
     if (idString != null) {
       final id = int.tryParse(idString);
