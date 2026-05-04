@@ -89,7 +89,7 @@ abstract class _SearchPageController with Store {
     SearchParser parser = SearchParser(input);
     String? idString = parser.parseId();
     String? tag = parser.parseTag();
-    String? sort = parser.parseSort();
+    String? genreIdString = parser.parseGenreId();
     String keywords = parser.parseKeywords();
     if (idString != null) {
       final id = int.tryParse(idString);
