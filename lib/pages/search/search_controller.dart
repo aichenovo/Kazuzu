@@ -9,6 +9,7 @@ import 'package:kazumi/utils/search_parser.dart';
 import 'package:kazumi/modules/search/search_history_module.dart';
 import 'package:kazumi/repositories/collect_repository.dart';
 import 'package:kazumi/repositories/search_history_repository.dart';
+import 'package:kazumi/modules/collect/collect_type.dart';
 import 'package:kazumi/request/bangumi.dart';
 import 'package:kazumi/request/trace.dart';
 import 'package:kazumi/utils/search_parser.dart';
